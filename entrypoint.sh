@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DST="/opt"
+DST="/opt/ikev2"
 mkdir -p $DST
 cd $DST
 
