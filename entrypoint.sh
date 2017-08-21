@@ -13,8 +13,12 @@ ip6tables -t nat -A POSTROUTING -s fd6a:6ce3:c8d8:7caa::/64 -o eth0 -m policy --
 ip6tables -t nat -A POSTROUTING -s fd6a:6ce3:c8d8:7caa::/64 -o eth0 -j MASQUERADE
 
 # hotfix for openssl `unable to write 'random state'` stderr
-SHARED_SECRET="123$(openssl rand -base64 32 2>/dev/null)"
-[ -f ${VOLUME}/ipsec.secrets ] || echo ": PSK \"${SHARED_SECRET}\"" > ${VOLUME}/ipsec.secrets
+if [ ! -f ${VOLUME}/ipsec.secrets ]; then
+  SHARED_SECRET="123$(openssl rand -base64 32 2>/dev/null)"
+  echo ": PSK \"${SHARED_SECRET}\"" > ${VOLUME}/ipsec.secrets
+fi
+
+cat ${VOLUME}/ipsec.secrets /etc/ipsec.secrets
 
 # hotfix for https://github.com/gaomd/docker-ikev2-vpn-server/issues/7
 rm -f /var/run/starter.charon.pid
